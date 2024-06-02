@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Obliczanie procentu tkanki tłuszczowej</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #800080, #000000);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #800080;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-align: left;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+        .fields {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Obliczanie procentu tkanki tłuszczowej</h1>
+        <form id="fatCalcForm">
+            <label for="gender">Płeć (M/K):</label>
+            <input type="text" id="gender" name="gender" required>
+
+            <label for="age">Wiek:</label>
+            <input type="number" id="age" name="age" required>
+
+            <div id="male-fields" class="fields">
+                <label for="chest">Pomiar klatki piersiowej (mm):</label>
+                <input type="number" id="chest" name="chest">
+                <label for="abdomen">Pomiar brzucha (mm):</label>
+                <input type="number" id="abdomen" name="abdomen">
+                <label for="thigh">Pomiar uda (mm):</label>
+                <input type="number" id="thigh" name="thigh">
+            </div>
+
+            <div id="female-fields" class="fields">
+                <label for="triceps">Pomiar tricepsa (mm):</label>
+                <input type="number" id="triceps" name="triceps">
+                <label for="suprailiac">Pomiar biodra (mm):</label>
+                <input type="number" id="suprailiac" name="suprailiac">
+                <label for="thigh">Pomiar uda (mm):</label>
+                <input type="number" id="thigh" name="thigh">
+            </div>
+
+            <input type="submit" value="Oblicz">
+        </form>
+        <h2 id="result"></h2>
+    </div>
+
+    <script>
+        document.getElementById('gender').addEventListener('input', function() {
+            var gender = this.value.toUpperCase();
+            document.getElementById('male-fields').style.display = (gender === 'M') ? 'block' : 'none';
+            document.getElementById('female-fields').style.display = (gender === 'K') ? 'block' : 'none';
+        });
+
+        document.getElementById('fatCalcForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var gender = document.getElementById('gender').value.toUpperCase();
+            var age = parseInt(document.getElementById('age').value);
+            var result = document.getElementById('result');
+
+            if (gender === 'M') {
+                var chest = parseFloat(document.getElementById('chest').value);
+                var abdomen = parseFloat(document.getElementById('abdomen').value);
+                var thigh = parseFloat(document.getElementById('thigh').value);
+                var bfPercent = calculateBodyFatMen(chest, abdomen, thigh, age);
+            } else if (gender === 'K') {
+                var triceps = parseFloat(document.getElementById('triceps').value);
+                var suprailiac = parseFloat(document.getElementById('suprailiac').value);
+                var thigh = parseFloat(document.getElementById('thigh').value);
+                var bfPercent = calculateBodyFatWomen(triceps, suprailiac, thigh, age);
+            } else {
+                result.textContent = "Niepoprawna płeć. Użyj 'M' dla mężczyzn i 'K' dla kobiet.";
+                return;
+            }
+
+            result.textContent = `Procent tkanki tłuszczowej: ${bfPercent.toFixed(2)}%`;
+        });
+
+        function calculateBodyFatMen(chest, abdomen, thigh, age) {
+            var sum3 = chest + abdomen + thigh;
+            var D = 1.10938 - 0.0008267 * sum3 + 0.0000016 * sum3**2 - 0.0002574 * age;
+            var bfPercent = ((4.95 / D) - 4.50) * 100;
+            return bfPercent;
+        }
+
+        function calculateBodyFatWomen(triceps, suprailiac, thigh, age) {
+            var sum3 = triceps + suprailiac + thigh;
+            var D = 1.0994921 - 0.0009929 * sum3 + 0.0000023 * sum3**2 - 0.0001392 * age;
+            var bfPercent = ((4.95 / D) - 4.50) * 100;
+            return bfPercent;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Obliczanie zapotrzebowania na wodę</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #800080, #000000);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #800080;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-align: left;
+        }
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+        #result {
+            color: #800080;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Obliczanie zapotrzebowania na wodę</h1>
+        <form id="waterCalcForm">
+            <label for="weight">Waga (kg):</label>
+            <input type="number" id="weight" name="weight" required>
+
+            <label for="age">Wiek:</label>
+            <input type="number" id="age" name="age" required>
+
+            <label for="activityLevel">Poziom aktywności:</label>
+            <select id="activityLevel" name="activityLevel" required>
+                <option value="1.2">Siedzący tryb życia, brak aktywności fizycznej</option>
+                <option value="1.375">Lekka aktywność fizyczna (ćwiczenia 1-3 dni w tygodniu)</option>
+                <option value="1.55">Średnia aktywność fizyczna (ćwiczenia 3-5 dni w tygodniu)</option>
+                <option value="1.725">Wysoka aktywność fizyczna (ćwiczenia 6-7 dni w tygodniu)</option>
+                <option value="1.9">Bardzo wysoka aktywność fizyczna (bardzo ciężka praca fizyczna, treningi dwukrotne w ciągu dnia)</option>
+            </select>
+
+            <input type="submit" value="Oblicz">
+        </form>
+        <h2 id="result"></h2>
+    </div>
+
+    <script>
+        document.getElementById('waterCalcForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            var weight = parseFloat(document.getElementById('weight').value);
+            var age = parseInt(document.getElementById('age').value);
+            var activityLevel = parseFloat(document.getElementById('activityLevel').value);
+            var result = document.getElementById('result');
+
+            var waterIntake = calculateWaterIntake(weight, age, activityLevel);
+
+            result.textContent = `Twoje zapotrzebowanie na wodę wynosi: ${waterIntake.toFixed(2)} litra dziennie.`;
+        });
+
+        function calculateWaterIntake(weight, age, activityLevel) {
+            return (weight / 30) * activityLevel;
+        }
+    </script>
+</body>
+</html>
